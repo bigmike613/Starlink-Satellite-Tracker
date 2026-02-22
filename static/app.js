@@ -10,6 +10,8 @@ let userLon      = null;
 let isPaused     = false;
 let frozenTime   = null;
 let refreshTimer = null;
+let openNoradId  = null;
+const satMarkers = new Map(); // norad_id → L.marker
 
 // ── Leaflet ───────────────────────────────────────────────────────────────────
 const satLayer = L.layerGroup();
@@ -82,6 +84,15 @@ function fetchAndUpdate() {
     .catch((err) => showError("Satellite fetch failed: " + err.message));
 }
 
+// ── HTML escaping ─────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 // ── Signal quality colour ─────────────────────────────────────────────────────
 /**
  * Returns a CSS colour for a connectable satellite based on quality 0–100.
@@ -118,16 +129,17 @@ function satIcon(sat) {
 }
 
 function popupHtml(s) {
+  const name = escHtml(s.name);
   if (s.connectable) {
     const bar = "█".repeat(Math.round(s.quality / 10)) +
                 "░".repeat(10 - Math.round(s.quality / 10));
-    return `<b>${s.name}</b><br>
+    return `<b>${name}</b><br>
       NORAD: ${s.norad_id}<br>
       Az / El: ${s.azimuth}° / ${s.elevation}°<br>
       Range: ${s.range_km} km &nbsp; Alt: ${s.altitude_km} km<br>
       Signal: <span style="color:${qualityColor(s.quality)}">${bar}</span> ${s.quality}%`;
   }
-  return `<b>${s.name}</b><br>
+  return `<b>${name}</b><br>
     NORAD: ${s.norad_id}<br>
     Az / El: ${s.azimuth}° / ${s.elevation}°<br>
     Range: ${s.range_km} km &nbsp; Alt: ${s.altitude_km} km<br>
@@ -136,22 +148,36 @@ function popupHtml(s) {
 
 // ── Render ────────────────────────────────────────────────────────────────────
 function renderSatellites(sats) {
+  // Capture which popup (if any) is currently open before clearing.
+  openNoradId = null;
+  satMarkers.forEach((marker, noradId) => {
+    if (marker.isPopupOpen()) openNoradId = noradId;
+  });
+
   satLayer.clearLayers();
+  satMarkers.clear();
 
   const connectable = sats.filter((s) => s.connectable);
   const approaching = sats.filter((s) => !s.connectable);
 
   // Draw approaching first (below connectable in z-order)
   approaching.forEach((s) => {
-    L.marker([s.lat, s.lon], { icon: satIcon(s), title: s.name })
+    const marker = L.marker([s.lat, s.lon], { icon: satIcon(s), title: s.name })
       .bindPopup(popupHtml(s))
       .addTo(satLayer);
+    satMarkers.set(s.norad_id, marker);
   });
   connectable.forEach((s) => {
-    L.marker([s.lat, s.lon], { icon: satIcon(s), title: s.name })
+    const marker = L.marker([s.lat, s.lon], { icon: satIcon(s), title: s.name })
       .bindPopup(popupHtml(s))
       .addTo(satLayer);
+    satMarkers.set(s.norad_id, marker);
   });
+
+  // Re-open the popup if the satellite is still visible.
+  if (openNoradId !== null && satMarkers.has(openNoradId)) {
+    satMarkers.get(openNoradId).openPopup();
+  }
 
   document.getElementById("sat-count").textContent =
     `${connectable.length} connectable`;

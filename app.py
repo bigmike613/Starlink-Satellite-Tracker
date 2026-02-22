@@ -26,6 +26,21 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 
+@app.after_request
+def set_security_headers(response):
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' https://unpkg.com; "
+        "style-src 'self' https://unpkg.com; "
+        "img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; "
+        "connect-src 'self' https://nominatim.openstreetmap.org; "
+        "frame-ancestors 'none';"
+    )
+    return response
+
+
 def _parse_time(time_str):
     """
     Parse an ISO-8601 string (e.g. "2024-01-15T14:30:00Z" or
@@ -58,6 +73,13 @@ def api_satellites():
     except ValueError:
         return jsonify({"error": "lat/lon/alt must be numeric"}), 400
 
+    if not (-90.0 <= lat <= 90.0):
+        return jsonify({"error": "lat must be between -90 and 90"}), 400
+    if not (-180.0 <= lon <= 180.0):
+        return jsonify({"error": "lon must be between -180 and 180"}), 400
+    if not (0.0 <= alt <= 10_000.0):
+        return jsonify({"error": "alt must be between 0 and 10000 metres"}), 400
+
     try:
         dt = _parse_time(request.args.get("time"))
     except ValueError as exc:
@@ -66,9 +88,9 @@ def api_satellites():
     try:
         sats, _ = sat_mod.get_satellites_for_observer(lat, lon, alt, dt=dt)
         return jsonify(sats)
-    except Exception as exc:
+    except Exception:
         app.logger.exception("Error computing satellites")
-        return jsonify({"error": str(exc)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/api/tle/status")
@@ -95,4 +117,4 @@ if __name__ == "__main__":
     except Exception as exc:
         app.logger.warning("Could not pre-fetch TLEs: %s", exc)
 
-    serve(app, host="0.0.0.0", port=80, threads=4)
+    serve(app, host="0.0.0.0", port=8080, threads=4)
