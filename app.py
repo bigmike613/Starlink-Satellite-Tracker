@@ -18,12 +18,14 @@ from datetime import datetime, timezone
 
 from flask import Flask, jsonify, render_template, request
 from waitress import serve
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 import satellite as sat_mod
 
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 
 @app.after_request
