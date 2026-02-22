@@ -30,9 +30,16 @@ satLayer.addTo(map);
 map.on("click", (e) => setLocation(e.latlng.lat, e.latlng.lng));
 
 // ── Location ─────────────────────────────────────────────────────────────────
+function isMobile() {
+  return window.matchMedia("(max-width: 600px)").matches;
+}
+
 function setLocation(lat, lon) {
   userLat = lat;
   userLon = lon;
+
+  // Collapse the panel on mobile so the map is visible after a location is set.
+  if (isMobile()) document.getElementById("panel").classList.add("panel-collapsed");
 
   if (userMarker)    map.removeLayer(userMarker);
   if (horizonCircle) map.removeLayer(horizonCircle);
@@ -433,3 +440,8 @@ if ("geolocation" in navigator) {
   showError("Geolocation not supported. Click the map or enter coordinates.");
   document.getElementById("btn-manual-toggle").click();
 }
+
+// ── Mobile panel toggle ────────────────────────────────────────────────────────
+document.getElementById("panel-handle").addEventListener("click", () => {
+  document.getElementById("panel").classList.toggle("panel-collapsed");
+});

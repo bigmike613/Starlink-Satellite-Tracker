@@ -268,6 +268,92 @@ button.active { background: rgba(0,255,136,0.18); border-color: #00ff88; }
 
 #sky-canvas { display: block; }
 
+/* ── Panel drag handle (mobile only) ── */
+#panel-handle {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  cursor: pointer;
+  touch-action: manipulation;
+  position: sticky;
+  top: 0;
+  background: rgba(8, 8, 16, 0.95);
+  border-radius: 14px 14px 0 0;
+  margin: 0 -16px 12px;
+  border-bottom: 1px solid #00ff8822;
+  z-index: 1;
+}
+
+#handle-bar {
+  width: 40px;
+  height: 4px;
+  background: #00ff8855;
+  border-radius: 2px;
+}
+
+/* ── Mobile layout ── */
+@media (max-width: 600px) {
+  /* Panel becomes a full-width bottom drawer */
+  #panel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 14px 14px 0 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    padding: 0 16px 24px;
+    max-height: 82vh;
+    overflow-y: auto;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #panel.panel-collapsed {
+    transform: translateY(calc(100% - 60px));
+  }
+
+  #panel-handle {
+    display: flex;
+  }
+
+  /* Push Leaflet attribution above the collapsed drawer peek */
+  .leaflet-bottom.leaflet-right {
+    bottom: 66px;
+  }
+
+  /* Sky panel: repositioned to top-right, scaled down */
+  #sky-panel {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    left: auto;
+    transform: scale(0.6);
+    transform-origin: top right;
+  }
+
+  /* Minimum 44 px tap targets */
+  button {
+    min-height: 44px;
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  /* 16 px prevents iOS auto-zoom on input focus */
+  #inp-address,
+  #inp-datetime,
+  #manual-coords input {
+    font-size: 16px;
+    min-height: 44px;
+    padding: 10px 8px;
+  }
+
+  #sat-count { font-size: 17px; }
+}
+
 /* ── Leaflet popup overrides ── */
 .leaflet-popup-content-wrapper {
   background: rgba(8, 8, 16, 0.95);

@@ -117,4 +117,4 @@ if __name__ == "__main__":
     except Exception as exc:
         app.logger.warning("Could not pre-fetch TLEs: %s", exc)
 
-    serve(app, host="0.0.0.0", port=8080, threads=4)
+    serve(app, host="0.0.0.0", port=80, threads=4)
