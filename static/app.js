@@ -143,7 +143,7 @@ function popupHtml(s) {
     return `<b>${name}</b><br>
       NORAD: ${s.norad_id}<br>
       Az / El: ${s.azimuth}° / ${s.elevation}°<br>
-      Range: ${s.range_km} km &nbsp; Alt: ${s.altitude_km} km<br>
+      Range: ${(s.range_km * 0.621371).toFixed(1)} mi &nbsp; Alt: ${(s.altitude_km * 0.621371).toFixed(1)} mi<br>
       Signal: <span style="color:${qualityColor(s.quality)}">${bar}</span> ${s.quality}%`;
   }
   return `<b>${name}</b><br>
