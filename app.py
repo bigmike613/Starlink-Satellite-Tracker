@@ -33,7 +33,7 @@ def set_security_headers(response):
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
         "script-src 'self' https://unpkg.com; "
-        "style-src 'self' https://unpkg.com; "
+        "style-src 'self' 'unsafe-inline' https://unpkg.com; "
         "img-src 'self' data: https://*.basemaps.cartocdn.com https://*.tile.openstreetmap.org; "
         "connect-src 'self' https://nominatim.openstreetmap.org; "
         "frame-ancestors 'none';"
