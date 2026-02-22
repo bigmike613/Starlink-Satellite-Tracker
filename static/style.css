@@ -1,0 +1,287 @@
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background: #080810;
+  color: #00ff88;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Full-screen map ── */
+#map {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── Shared panel style ── */
+.panel-base {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(8, 8, 16, 0.88);
+  border: 1px solid #00ff8866;
+  border-radius: 3px;
+  backdrop-filter: blur(6px);
+}
+
+/* ── Info panel (top-right) ── */
+#panel {
+  composes: panel-base;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background: rgba(8, 8, 16, 0.88);
+  border: 1px solid #00ff8866;
+  border-radius: 3px;
+  backdrop-filter: blur(6px);
+  padding: 14px 16px;
+  min-width: 210px;
+  max-width: 260px;
+}
+
+#panel h1 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #00ff88;
+  border-bottom: 1px solid #00ff8833;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+#byline {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00ff8855;
+  margin-bottom: 10px;
+}
+
+#sat-count {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+#sat-approaching {
+  font-size: 12px;
+  color: #ff5555;
+  min-height: 16px;
+}
+
+#last-updated {
+  font-size: 10px;
+  color: #00ff8866;
+  margin-bottom: 6px;
+}
+
+/* ── Signal quality legend ── */
+#signal-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #00ff8877;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.leg-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 4px;
+}
+
+/* ── Buttons ── */
+button {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #00ff8866;
+  color: #00ff88;
+  padding: 5px 10px;
+  font-family: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.15s;
+}
+button:hover  { background: rgba(0,255,136,0.08); }
+button.active { background: rgba(0,255,136,0.18); border-color: #00ff88; }
+
+/* ── Address search ── */
+#address-search {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #00ff8822;
+  padding-bottom: 10px;
+}
+
+#address-row {
+  display: flex;
+  gap: 4px;
+}
+
+#inp-address {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #00ff8844;
+  color: #00ff88;
+  padding: 5px 8px;
+  font-family: inherit;
+  font-size: 11px;
+}
+#inp-address::placeholder { color: #00ff8844; }
+#inp-address:focus { outline: none; border-color: #00ff88; }
+
+#btn-address {
+  width: auto;
+  padding: 5px 10px;
+  margin-top: 0;
+}
+
+#address-result {
+  font-size: 10px;
+  color: #00ff8877;
+  margin-top: 4px;
+  min-height: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#address-result.error { color: #ff5555; }
+
+/* ── Time controls ── */
+#time-controls {
+  margin-top: 10px;
+  border-top: 1px solid #00ff8822;
+  padding-top: 8px;
+}
+
+#time-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #00ff8866;
+  margin-bottom: 4px;
+}
+
+#inp-datetime {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #00ff8844;
+  color: #00ff88;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 11px;
+  /* suppress native date-picker chrome styling */
+  color-scheme: dark;
+}
+#inp-datetime:focus { outline: none; border-color: #00ff88; }
+
+/* Highlighted when showing a non-live time */
+#inp-datetime.frozen { border-color: #ffaa00; color: #ffaa00; }
+
+#time-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+.btn-half {
+  flex: 1;
+}
+
+/* Pause button state variants */
+#btn-pause.live   { border-color: #00ff8866; color: #00ff88; }
+#btn-pause.paused { border-color: #ffaa00;   color: #ffaa00; }
+#btn-pause.frozen { border-color: #ff6644;   color: #ff6644; }
+
+/* Frozen-time badge shown in the panel */
+#frozen-badge {
+  display: none;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #ffaa00;
+  border: 1px solid #ffaa0066;
+  padding: 2px 6px;
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ── Manual coords form ── */
+#manual-coords {
+  display: none;
+  margin-top: 8px;
+}
+#manual-coords input {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #00ff8844;
+  color: #00ff88;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 11px;
+  margin-top: 4px;
+}
+#manual-coords input::placeholder { color: #00ff8844; }
+#manual-coords input:focus { outline: none; border-color: #00ff88; }
+
+/* ── Error message ── */
+#error-msg {
+  font-size: 11px;
+  color: #ff4455;
+  margin-top: 8px;
+  word-break: break-word;
+  display: none;
+}
+
+/* ── Sky view panel (bottom-right) ── */
+#sky-panel {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1000;
+  background: rgba(8, 8, 16, 0.88);
+  border: 1px solid #00ff8866;
+  border-radius: 3px;
+  backdrop-filter: blur(6px);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+#sky-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #00ff8888;
+  margin-bottom: 8px;
+}
+
+#sky-canvas { display: block; }
+
+/* ── Leaflet popup overrides ── */
+.leaflet-popup-content-wrapper {
+  background: rgba(8, 8, 16, 0.95);
+  border: 1px solid #00ff8866;
+  border-radius: 2px;
+  color: #00ff88;
+  font-family: 'Courier New', monospace;
+  box-shadow: none;
+}
+.leaflet-popup-tip-container { display: none; }
+.leaflet-popup-content {
+  margin: 10px 12px;
+  font-size: 12px;
+  line-height: 1.9;
+}
+.leaflet-popup-content b { color: #ffffff; }
+.leaflet-popup-close-button { color: #00ff8888 !important; }

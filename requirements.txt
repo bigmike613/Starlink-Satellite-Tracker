@@ -1,0 +1,4 @@
+flask
+sgp4
+requests
+numpy

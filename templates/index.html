@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Starlink Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <!-- ── Info panel ── -->
+  <div id="panel">
+    <h1>Starlink Tracker</h1>
+    <div id="byline">CS50 Final Project &mdash; Mike Tomasulo</div>
+
+    <div id="sat-count">Waiting for location…</div>
+    <div id="sat-approaching"></div>
+    <div id="last-updated"></div>
+    <div id="frozen-badge">Time Shift mode</div>
+
+    <div id="signal-legend">
+      <span class="leg-dot" style="background:hsl(0,100%,52%)"></span>low
+      <span class="leg-dot" style="background:hsl(60,100%,52%)"></span>mid
+      <span class="leg-dot" style="background:hsl(120,100%,52%)"></span>high
+      <span class="leg-dot" style="background:#ff3333"></span>approaching
+    </div>
+
+    <div id="address-search">
+      <div id="address-row">
+        <input id="inp-address" type="text" placeholder="Enter address or place…" autocomplete="off" />
+        <button id="btn-address">Go</button>
+      </div>
+      <div id="address-result"></div>
+    </div>
+
+    <div id="controls">
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-manual-toggle">Enter Coordinates</button>
+    </div>
+
+    <div id="time-controls">
+      <div id="time-label">Time (UTC)</div>
+      <input id="inp-datetime" type="datetime-local" />
+      <div id="time-row">
+        <button id="btn-now" class="btn-half">↺ Now</button>
+        <button id="btn-go"  class="btn-half">Go</button>
+      </div>
+    </div>
+
+    <div id="manual-coords">
+      <input id="inp-lat" type="number" placeholder="Latitude"  step="0.0001" />
+      <input id="inp-lon" type="number" placeholder="Longitude" step="0.0001" />
+      <button id="btn-set-location">Set Location</button>
+    </div>
+
+    <div id="error-msg"></div>
+  </div>
+
+  <!-- ── Sky view ── -->
+  <div id="sky-panel">
+    <div id="sky-title">Sky View</div>
+    <canvas id="sky-canvas" width="220" height="220"></canvas>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
