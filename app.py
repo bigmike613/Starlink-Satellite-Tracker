@@ -82,7 +82,13 @@ def api_satellites():
     if not (0.0 <= alt <= 10_000.0):
         return jsonify({"error": "alt must be between 0 and 10000 metres"}), 400
 
-    logging.info(f"Processing satellite request for lat={lat}, lon={lon} from ({request.remote_addr})")
+    logging.info(
+        "Request: lat=%s lon=%s | remote_addr=%s | X-Forwarded-For=%s | X-Real-IP=%s",
+        lat, lon,
+        request.remote_addr,
+        request.headers.get("X-Forwarded-For", "not-set"),
+        request.headers.get("X-Real-IP", "not-set"),
+    )
 
     try:
         dt = _parse_time(request.args.get("time"))
