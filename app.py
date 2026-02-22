@@ -17,6 +17,7 @@ import logging
 from datetime import datetime, timezone
 
 from flask import Flask, jsonify, render_template, request
+from waitress import serve
 
 import satellite as sat_mod
 
@@ -94,4 +95,4 @@ if __name__ == "__main__":
     except Exception as exc:
         app.logger.warning("Could not pre-fetch TLEs: %s", exc)
 
-    app.run(debug=True)
+    serve(app, host="0.0.0.0", port=80, threads=4)
